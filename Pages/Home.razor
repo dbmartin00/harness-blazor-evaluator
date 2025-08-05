@@ -1,0 +1,25 @@
+﻿@page "/"
+
+@inject FeatureFlagDemo.Services.FeatureFlagService FlagService
+
+<PageTitle>Home</PageTitle>
+
+<h1>@greeting</h1>
+
+<p>Welcome to your new app.</p>
+
+@code {
+    string greeting = "Loading...";
+    string userKey = "dmartin";  // Could be dynamic in future
+
+    protected override async Task OnInitializedAsync()
+    {
+        Dictionary<string, object> attributes = new Dictionary<string, object>();
+        attributes.Add("region", "NA");
+
+        // Use the feature flag service to get greeting
+        greeting = await FlagService.GetGreetingAsync(userKey, attributes, "Greetings, Human!");
+        Console.WriteLine($"Greeting set in Home.razor: {greeting}");
+    }
+}
+

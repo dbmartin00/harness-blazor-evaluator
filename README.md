@@ -16,5 +16,18 @@ flag name, and (optionally) a set of attributes, so all
 feature flag evaluations are possible, fast, scalable,
 and secure.
 
+To install, 
+
+wwwroot/appsettings.json
+
+```
+{
+  "FeatureFlagConfig": {
+    "BaseUrl": "https://<your evaluator host>:<port>",
+    "EvaluatorApiKey": "<your evaluator auth key>"  
+  }
+}
+```
+
 David.Martin@harness.io
 

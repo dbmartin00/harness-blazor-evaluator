@@ -13,12 +13,14 @@ namespace FeatureFlagDemo.Services
     public class FeatureFlagConfig
     {
         public string BaseUrl { get; set; } = "";
+        public string EvaluatorApiKey { get; set; } = "";
     }
 
     public class FeatureFlagService
     {
         private readonly HttpClient _httpClient;
         private readonly string _flagUrlTemplate;
+        private readonly string _apiKey;
 
         public FeatureFlagService(HttpClient httpClient, FeatureFlagConfig config)
         {
@@ -30,7 +32,14 @@ namespace FeatureFlagDemo.Services
                 throw new InvalidOperationException("FME_BASE_URL is not configured.");
             }
 
+            if (string.IsNullOrEmpty(config.EvaluatorApiKey))
+            {
+                throw new InvalidOperationException("FME_EVALUATOR_API_KEY is not configured.");
+            }
+
             _flagUrlTemplate = $"{baseUrl}/client/get-treatments-with-config?key={{0}}&split-names={{1}}";
+            _apiKey = config.EvaluatorApiKey;
+
             Console.WriteLine($"FeatureFlagService initialized with base URL: {baseUrl}");
         }
 
@@ -51,8 +60,8 @@ namespace FeatureFlagDemo.Services
                 Console.WriteLine($"Constructed flag URL: {flagUrl}");
 
                 var request = new HttpRequestMessage(HttpMethod.Get, flagUrl);
-                request.Headers.Add("Authorization", "splitInTheW1ld!");
-                Console.WriteLine("Added Authorization header.");
+                request.Headers.Add("Authorization", _apiKey);
+                Console.WriteLine("Added Authorization header from config.");
 
                 var response = await _httpClient.SendAsync(request);
                 Console.WriteLine($"HTTP status code: {response.StatusCode}");
